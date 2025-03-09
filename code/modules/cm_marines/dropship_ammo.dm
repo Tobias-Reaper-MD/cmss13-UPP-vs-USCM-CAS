@@ -479,3 +479,36 @@
 		return "It's loaded with \a [src] containing [ammo_count] [rocket_name]\s."
 
 //A note from the guy that made this. this was my first project, and it probally sort of sucks. its effectively modified from the core Minirockets. But i oddly had a blast doing it, and hope i can look back of this with fondness later. I love this community and wanted to give more than my character.
+
+
+/obj/structure/ship_ammo/minirocket/Gas
+	name = "\improper 1WC-AH pacifcation shell 'Haze'"
+	desc = "The Type 1WC-AH  pacifier shell, also known as 'haze', lacks a targeting system, but contains a irritant mix of chemicals, designed to put down civil protests. It has recently seen use against CLF riots."
+	icon_state = "minirocket"
+	icon = 'icons/obj/structures/props/almayer_props.dmi'
+	equipment_type = /obj/structure/dropship_equipment/weapon/minirocket_pod
+	ammo_count = 12
+	max_ammo_count = 12
+	ammo_name = "Gas shells"
+	travelling_time = 50 //Slightly faster than their mini-mike siblings.
+	transferable_ammo = TRUE
+	point_cost = 300
+	fire_mission_delay = 2  //Moderate cooldown, as over use will rapidly become annoying and delay.
+	rocket_name= "Gas shell"
+
+/obj/structure/ship_ammo/minirocket/smoke/detonate_on(turf/impact, obj/structure/dropship_equipment/weapon/fired_from)
+	impact.ceiling_debris_check(2)
+	spawn(5)
+		var/datum/effect_system/smoke_spread/cas_teargas/S = new /datum/effect_system/smoke_spread/cas_teargas
+		S.set_up(7,0,impact,null,70)
+		S.start()
+		if(!ammo_count && loc)
+			qdel(src) //deleted after last Gas shell is fired and impacts the ground.
+/datum/effect_system/smoke_spread/cas_teargas
+	smoke_type = /obj/effect/particle_effect/smoke/cas_teargas
+
+/obj/effect/particle_effect/smoke/cas_teargas/affect(mob/living/carbon/human/creature)
+	creature.apply_effects(agony = 3, eyeblur = 2)
+/obj/structure/ship_ammo/minirocket/smoke/show_loaded_desc(mob/user)
+	if(ammo_count)
+		return "It's loaded with \a [src] containing [ammo_count] [rocket_name]\s."
